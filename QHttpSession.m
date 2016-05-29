@@ -11,12 +11,13 @@
 
 @implementation QHttpSession
 
+#pragma mark - 对外接口实现
 //Http-Get请求方法的实现
 + (void)getHttpURL:(NSString *)urlString complete:(CallBack)callback
 {
     
     //生成NSURL对象
-    NSURL *url = [NSURL URLWithString:urlString];
+    NSURL *url = [NSURL URLWithString:[self urlEncode:urlString]];
     //生成NSURLRequest对象
     NSURLRequest *requst = [NSURLRequest requestWithURL:url];
     //使用NSURLSession进行网络下载
@@ -107,6 +108,7 @@
     
 }
 
+#pragma mark - 内部封装实现
 //封装独立的创建Session方法
 + (void)createSessionWithRequest:(NSURLRequest *)request complete:(CallBack)callback
 {
@@ -117,7 +119,6 @@
         //回调主线程
         dispatch_async(dispatch_get_main_queue(), ^{
             
-            
             //判断网络请求有没有成功
             if (error) {
                 //父类-->子类，可以强转；反之，一般不这样操作。不同类型，一般不强转。
@@ -126,23 +127,31 @@
                 
                 //如果返回的数据是json数据，返回解析后的json类型；
                 //如果返回得数据不是json数据，返回NSData类型。
-                //if ([NSJSONSerialization isValidJSONObject:data]) {
-                //转成json数据
-                //NSJSONReadingAllowFragments 可调整为最外层非数组或字典
-                id jsonObjc = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
-                callback((NSHTTPURLResponse *)response, jsonObjc, nil);
-                //            }else{
-                //                callback((NSHTTPURLResponse *)response, data, nil);
-                //            }
                 
+                NSError *error = nil;
+                id jsonObjc = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
+                
+                if (error) {
+                    callback((NSHTTPURLResponse *)response, data, nil);
+                }else{
+                    callback((NSHTTPURLResponse *)response, jsonObjc, nil);
+                }
+            
             }
-            
-            
             
         });
 
     }];
     [task resume];
+}
+//支持URL编码汉字
++ (NSString *)urlEncode:(NSString *)url
+{
+    return (NSString *) CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
+                                         (CFStringRef)url,
+                                          NULL,
+                                          NULL,
+                                          kCFStringEncodingUTF8));
 }
 
 @end
