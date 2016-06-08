@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "QNet"
-  s.version      = "0.2.0"
+  s.version      = "0.2.1"
   s.summary      = "Http NSURLSession (Post/get) + Network Monitor + Net Image"
 
   # This description is used to generate tags and improve search results.
@@ -78,7 +78,7 @@ Pod::Spec.new do |s|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  s.source       = { :git => "https://github.com/jacycode/QNet.git", :tag => "0.2.0" }
+  s.source       = { :git => "https://github.com/jacycode/QNet.git", :tag => "0.2.1" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #

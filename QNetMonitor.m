@@ -12,7 +12,7 @@
 
 @implementation QNetMonitor
 
-static SCNetworkReachabilityRef reachability;
+static SCNetworkReachabilityRef reachability = nil;
 
 static QNetMonitorStatus callme;
 
@@ -78,7 +78,7 @@ static void function_C(SCNetworkReachabilityRef __unused target, SCNetworkReacha
 + (void)startMonitorWithStatus:(QNetMonitorStatus)callback
 {
     callme = callback;
-    SCNetworkReachabilityRef reachability = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, [@"0.0.0.0" UTF8String]);
+    reachability = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, [@"0.0.0.0" UTF8String]);
     SCNetworkReachabilitySetCallback(reachability, function_C, NULL);
     SCNetworkReachabilityScheduleWithRunLoop(reachability, CFRunLoopGetMain(), kCFRunLoopCommonModes);
 }
